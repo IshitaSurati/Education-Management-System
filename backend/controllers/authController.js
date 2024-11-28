@@ -3,8 +3,12 @@ const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
     const { name, email, password, role } = req.body;
+
+    // Ensure the role is capitalized correctly to match the database
+    const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+
     try {
-        const user = new User({ name, email, password, role });
+        const user = new User({ name, email, password, role: formattedRole });
         await user.save();
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
@@ -28,7 +32,6 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 // Get all users
 exports.getAllUsers = async (req, res) => {
     try {
