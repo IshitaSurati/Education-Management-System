@@ -1,24 +1,28 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const connectDB = require('./config/db');
+require('dotenv').config();
+
 const authRoutes = require('./routes/authRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
+const connectDB = require('./config/db');
 
 const app = express();
 
-// Middlewares
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// Connect to MongoDB
-connectDB();
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/submissions', submissionRoutes);
 
-// Server
+// Connect to Database
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  connectDB();
+});

@@ -1,29 +1,38 @@
+// Navbar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-  const token = localStorage.getItem('token');
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login'; // Redirect to login
+  // Get the current user's role
+  const getUserRole = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT to get user details
+      return decodedToken.role; // Assuming the role is stored in the token
+    }
+    return null;
   };
 
+  const role = getUserRole();
+
   return (
-    <nav className="bg-blue-600 text-white p-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="text-xl font-semibold">EMS</Link>
-        <div className="space-x-4">
-          {!token ? (
-            <>
-              <Link to="/login" className="hover:underline">Login</Link>
-              <Link to="/signup" className="hover:underline">Sign Up</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/dashboard" className="hover:underline">Dashboard</Link>
-              <button onClick={handleLogout} className="bg-red-600 p-2 rounded">Logout</button>
-            </>
-          )}
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        <Link className="navbar-brand" to="/">LMS</Link>
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item">
+              <Link className="nav-link" to="/login">Login</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/signup">Signup</Link>
+            </li>
+            {role === 'admin' || role === 'teacher' ? (
+              <li className="nav-item">
+                <Link className="nav-link" to="/add-course">Add Course</Link>
+              </li>
+            ) : null}
+          </ul>
         </div>
       </div>
     </nav>
